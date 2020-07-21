@@ -27,6 +27,9 @@ int RunningProcesses();
 std::string OperatingSystem();
 std::string Kernel();
 
+// Helpers
+void LineFormatter(std::string& line);
+
 // CPU
 enum CPUStates {
   kUser_ = 0,

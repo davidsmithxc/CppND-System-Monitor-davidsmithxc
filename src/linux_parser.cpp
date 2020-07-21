@@ -6,10 +6,18 @@
 #include <string>
 #include <vector>
 
+#include <cmath>
+
 using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+
+void LinuxParser::LineFormatter(std::string& line){
+      std::replace(line.begin(), line.end(), ' ', '_');
+      std::replace(line.begin(), line.end(), '=', ' ');
+      std::replace(line.begin(), line.end(), '"', ' ');
+};
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -36,13 +44,13 @@ string LinuxParser::OperatingSystem() {
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
-  string os, kernel;
+  string os, version,kernel;
   string line;
   std::ifstream stream(kProcDirectory + kVersionFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> os >> kernel;
+    linestream >> os >> version >> kernel;
   }
   return kernel;
 }
@@ -68,10 +76,40 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+// FIXME: Memory utilization does match system monitor
+float LinuxParser::MemoryUtilization() { 
+  string line;
+  string key;
+  string value;
+  std::unordered_map<string, float> meminfo_map;
+
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  if (filestream.is_open()) {
+    while(std::getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), ':', ' ');
+      std::istringstream linestream(line);
+      linestream >> key >> value;
+      meminfo_map[key] = std::stof(value);
+    };
+  }
+
+  return (1.0 - meminfo_map["MemFree"] / meminfo_map["MemTotal"]);
+}
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() { 
+  string uptime, line;
+
+  std::ifstream filestream(kProcDirectory + kUptimeFilename);
+  if(filestream.is_open()) {
+    std::getline(filestream, line);
+    std::istringstream linestream(line);
+    linestream >> uptime;
+  }
+  // float uptime_f = std::stof(uptime);
+  // long int ut_long = ;
+  return std::lround(std::stof(uptime)); 
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
