@@ -19,10 +19,11 @@ using std::vector;
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
-// TODO: Return a container composed of the system's processes
-// TODO: Get int-list of processes
-// TODO: Initialize vector of process items w/ PID
+// DONE: Return a container composed of the system's processes
+// DONE: Get int-list of processes
+// DONE: Initialize vector of process items w/ PID
 // TODO: Add process attr -> maybe as part of constructor
+// TODO: Bonus -> don't clear each cycle, check if process exists
 vector<Process>& System::Processes() {
   // refresh list each time
   processes_.clear();

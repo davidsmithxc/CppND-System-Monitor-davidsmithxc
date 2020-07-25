@@ -11,7 +11,7 @@ class Process {
   // constructor
   Process(){};
   Process(int pid);
-
+  
   // accessors
   int Pid();                               // TODO: See src/process.cpp
   std::string User();                      // TODO: See src/process.cpp
@@ -25,12 +25,14 @@ class Process {
   void Pid(int p);
   void User(std::string u);
   void Ram(std::string r);
+  void Command(std::string c);
 
   // TODO: Declare any necessary private members
  private:
   int m_pid;
   std::string m_user;
   std::string m_ram;
+  std::string m_cmd;
 };
 
 #endif
