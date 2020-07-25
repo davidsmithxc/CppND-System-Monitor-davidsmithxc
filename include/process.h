@@ -8,6 +8,11 @@ It contains relevant attributes as shown below
 */
 class Process {
  public:
+  // constructor
+  Process(){};
+  Process(int pid);
+
+  // accessors
   int Pid();                               // TODO: See src/process.cpp
   std::string User();                      // TODO: See src/process.cpp
   std::string Command();                   // TODO: See src/process.cpp
@@ -16,8 +21,14 @@ class Process {
   long int UpTime();                       // TODO: See src/process.cpp
   bool operator<(Process const& a) const;  // TODO: See src/process.cpp
 
+  // mutators
+  void Pid(int p);
+  void User(std::string u);
+
   // TODO: Declare any necessary private members
  private:
+  int m_pid;
+  std::string m_user;
 };
 
 #endif

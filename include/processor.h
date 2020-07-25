@@ -7,7 +7,7 @@ class Processor {
 
   // TODO: Declare any necessary private members
  private:
-    // TODO: Add m_prev_alltime, m_prev_non_idletime, and associated timestamps
+  // TODO: Add m_prev_alltime, m_prev_non_idletime, and associated timestamps
 };
 
 #endif
