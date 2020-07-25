@@ -26,6 +26,7 @@ class Process {
   void User(std::string u);
   void Ram(std::string r);
   void Command(std::string c);
+  void UpTime(long int ut);
 
   // TODO: Declare any necessary private members
  private:
@@ -33,6 +34,7 @@ class Process {
   std::string m_user;
   std::string m_ram;
   std::string m_cmd;
+  long int m_uptime;
 };
 
 #endif
