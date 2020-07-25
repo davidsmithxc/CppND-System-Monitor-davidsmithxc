@@ -17,12 +17,15 @@ using std::vector;
 Process::Process(int pid) {
   Pid(pid);
   User(LinuxParser::User(pid));
+  Ram(LinuxParser::Ram(pid));
 }
 
 // *** Mutators ***
 void Process::Pid(int p) { m_pid = p; }
 
 void Process::User(std::string u) { m_user = u; }
+
+void Process::Ram(std::string r) { m_ram = r; }
 
 // *** Accessors ***
 
@@ -36,7 +39,7 @@ float Process::CpuUtilization() { return 0; }
 string Process::Command() { return string(); }
 
 // TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+string Process::Ram() { return m_ram; }
 
 // TODO: Return the user (name) that generated this process
 string Process::User() { return m_user; }

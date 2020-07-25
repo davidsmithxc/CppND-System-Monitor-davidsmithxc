@@ -24,11 +24,13 @@ class Process {
   // mutators
   void Pid(int p);
   void User(std::string u);
+  void Ram(std::string r);
 
   // TODO: Declare any necessary private members
  private:
   int m_pid;
   std::string m_user;
+  std::string m_ram;
 };
 
 #endif
