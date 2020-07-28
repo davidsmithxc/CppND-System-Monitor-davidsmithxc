@@ -10,28 +10,30 @@
 #include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
+#include <algorithm>
 
 using std::set;
 using std::size_t;
 using std::string;
 using std::vector;
 
-// TODO: Return the system's CPU
+// Done: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
 // DONE: Return a container composed of the system's processes
 // DONE: Get int-list of processes
 // DONE: Initialize vector of process items w/ PID
-// TODO: Add process attr -> maybe as part of constructor
-// TODO: Bonus -> don't clear each cycle, check if process exists
 vector<Process>& System::Processes() {
   // refresh list each time
   processes_.clear();
 
   vector<int> pids_int = LinuxParser::Pids();
   for (int pid : pids_int) {
-    processes_.push_back(Process(pid));
+      processes_.push_back(Process(pid));
   }
+
+
+  std::sort(processes_.begin(), processes_.end());  
   return processes_;
 }
 

@@ -8,21 +8,8 @@
 #include "linux_parser.h"
 
 // DONE: Return the aggregate CPU utilization
-// TODO: Clean up CPU utilization code -> Use Linux Parser Enum CpuUtilization
 float Processor::Utilization() {
   std::vector<std::string> proc_stat_info;
-  /* The Utilization Data is reported in the following order
-  "user",
-  "nice",
-  "system",
-  "idle",
-  "iowait",
-  "irq",
-  "softirq",
-  "guest",
-  "guest_nice"
-  */
-
   std::vector<float> cpu_info;
 
   // get cpu aggregate info
@@ -33,15 +20,15 @@ float Processor::Utilization() {
     cpu_info.push_back(value);
   }
 
-  float usertime = cpu_info[0];
-  float nicetime = cpu_info[1];
-  float systemtime = cpu_info[2];
-  float idletime = cpu_info[3];
-  float iowaittime = cpu_info[4];
-  float irqtime = cpu_info[5];
-  float softirqtime = cpu_info[6];
-  float guesttime = cpu_info[7];
-  float guest_nicetime = cpu_info[8];
+  float usertime = cpu_info[LinuxParser::CPUStates::kUser_];
+  float nicetime = cpu_info[LinuxParser::CPUStates::kNice_];
+  float systemtime = cpu_info[LinuxParser::CPUStates::kSystem_];
+  float idletime = cpu_info[LinuxParser::CPUStates::kIdle_];
+  float iowaittime = cpu_info[LinuxParser::CPUStates::kIOwait_];
+  float irqtime = cpu_info[LinuxParser::CPUStates::kIRQ_];
+  float softirqtime = cpu_info[LinuxParser::CPUStates::kSoftIRQ_];
+  float guesttime = cpu_info[LinuxParser::CPUStates::kGuest_];
+  float guest_nicetime = cpu_info[LinuxParser::CPUStates::kGuestNice_];
 
   // implement calculation
   usertime -= guesttime;
@@ -49,9 +36,14 @@ float Processor::Utilization() {
   float idlealltime = idletime + iowaittime;
   float systemalltime = systemtime + irqtime + softirqtime;
   float virtalltime = guesttime + guest_nicetime;
-  float totaltime =
-      usertime + nicetime + systemalltime + idlealltime + virtalltime;
+  float totaltime = usertime + nicetime + systemalltime + idlealltime + virtalltime;
   float non_idletime = usertime + nicetime + irqtime + softirqtime;
 
-  return non_idletime / totaltime;
+  float delta_alltime = totaltime - m_prev_alltime;
+  float delta_nonidletime = non_idletime - m_prev_nonidletime;
+
+  m_prev_alltime = totaltime;
+  m_prev_nonidletime = non_idletime;
+
+  return delta_nonidletime / delta_alltime;
 }
