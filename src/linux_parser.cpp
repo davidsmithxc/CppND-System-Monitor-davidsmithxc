@@ -59,6 +59,7 @@ vector<int> LinuxParser::Pids() {
       // Is every character of the name a digit?
       string filename(file->d_name);
       if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        // not checking empty string give if clause check for isdigit
         int pid = stoi(filename);
         pids.push_back(pid);
       }
@@ -81,7 +82,11 @@ float LinuxParser::MemoryUtilization() {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       linestream >> key >> value;
-      meminfo_map[key] = std::stof(value);
+      if (value != "") {
+        meminfo_map[key] = std::stof(value);
+      } else {
+        meminfo_map[key] = 0.0f;
+      }
     };
   }
 
@@ -119,17 +124,17 @@ long LinuxParser::ActiveJiffies(int pid) {
     for (int i = 1; i <= 17; i++) {
       stringstream >> value;
 
-      if (i == 14) {
+      if (i == 14 && value != "") {
         utime = (long)std::stoi(value);
       }
-      if (i == 15) {
-        utime = (long)std::stoi(value);
+      if (i == 15 && value != "") {
+        stime = (long)std::stoi(value);
       }
-      if (i == 16) {
-        utime = (long)std::stoi(value);
+      if (i == 16 && value != "") {
+        cutime = (long)std::stoi(value);
       }
-      if (i == 17) {
-        utime = (long)std::stoi(value);
+      if (i == 17 && value != "") {
+        cstime = (long)std::stoi(value);
       }
     }
   }
@@ -172,7 +177,7 @@ int LinuxParser::TotalProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream stringstream(line);
       stringstream >> key >> value;
-      if (key == "processes") {
+      if (key == "processes" && value != "") {
         return std::stoi(value);
       }
     }
@@ -188,7 +193,7 @@ int LinuxParser::RunningProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream stringstream(line);
       stringstream >> key >> value;
-      if (key == "procs_running") {
+      if (key == "procs_running" && value != "") {
         return std::stoi(value);
       }
     }
@@ -223,7 +228,8 @@ string LinuxParser::Ram(int pid) {
       stringstream >> key >> value;
 
       if (key == "VmSize") {
-        int ram_mb = std::stof(value) / 1000.0f;
+        int ram_mb = 0;
+        if(value != "") { ram_mb = std::stof(value) / 1000.0f; }
         return (std::to_string(ram_mb));
       }
     }
@@ -253,8 +259,13 @@ string LinuxParser::Uid(int pid) {
 
 // DONE: Read and return the user associated with a process
 string LinuxParser::User(int pid) {
-  string uid_string = Uid(pid);
-  int uid_int = std::stoi(uid_string);
+  std::string uid_string = Uid(pid);
+  int uid_int = 0;
+  if (uid_string != "") {
+    uid_int = std::stoi(uid_string); // not checking for empty string as string is guaranteed from above
+  } else {
+    return "ERROR";
+  }
 
   // init map on first call
   if (LinuxParser::uid_map.empty()) {
@@ -266,7 +277,9 @@ string LinuxParser::User(int pid) {
         std::replace(line.begin(), line.end(), ':', ' ');
         std::istringstream stringstream(line);
         stringstream >> usr_name >> usr_x >> usr_num;
-        LinuxParser::uid_map[std::stoi(usr_num)] = std::string(usr_name);
+        if (usr_num != "") {
+          LinuxParser::uid_map[std::stoi(usr_num)] = std::string(usr_name);
+        }
       }
     }
   }
@@ -305,7 +318,8 @@ long LinuxParser::UpTime(int pid) {
       stringstream >> value;
     }
 
-    long int pid_t_start = long(std::stoi(value)) / sysconf(_SC_CLK_TCK);
+    long int pid_t_start = 0.0f;
+    if (value != "") { pid_t_start = long(std::stoi(value)) / sysconf(_SC_CLK_TCK); }
 
     return UpTime() - pid_t_start;
   }

@@ -61,7 +61,11 @@ long int Process::UpTime() { return m_uptime; }
 // Done: Overload the "less than" comparison operator for Process objects
 // TODO: Add sorting for something other than ram
 bool Process::operator<(Process const& other) const {
-  float other_val = std::stof(other.Ram());
-  float this_val = std::stof(Ram());
+  float other_val = 0.0f;
+  float this_val = 0.0f;
+
+  if(other.Ram() != "") { other_val = std::stof(other.Ram()); }
+  if(Ram() != "") { this_val = std::stof(Ram()); }
+
   return this_val > other_val;
 }

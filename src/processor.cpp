@@ -16,7 +16,8 @@ float Processor::Utilization() {
   proc_stat_info = LinuxParser::CpuUtilization();
   // convert to mapped float information
   for (unsigned int i = 0; i < proc_stat_info.size(); i++) {
-    float value = std::stof(proc_stat_info[i]);
+    float value = 0.0f;
+    if (proc_stat_info[i] != "") { value = std::stof(proc_stat_info[i]); }
     cpu_info.push_back(value);
   }
 
